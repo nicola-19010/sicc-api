@@ -1,13 +1,5 @@
 spring:
   application:
     name: sicc-api
-
   profiles:
-    active: dev  # por defecto usa el entorno de desarrollo
-
-server:
-  port: 8080
-
-logging:
-  level:
-    org.springframework: INFO
+    active: dev
