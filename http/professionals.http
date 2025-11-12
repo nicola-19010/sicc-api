@@ -1,0 +1,31 @@
+### List professionals
+GET http://{{host}}:{{port}}/api/healthcare-professionals?page=0&size=10
+Accept: application/json
+
+### Create professional
+POST http://{{host}}:{{port}}/api/healthcare-professionals
+Content-Type: application/json
+
+{
+  "rut": "11.111.111-1",
+  "name": "Dra. María López",
+  "specialty": "Pediatría"
+}
+
+### Get professional
+GET http://{{host}}:{{port}}/api/healthcare-professionals/1
+Accept: application/json
+
+### Update professional
+PUT http://{{host}}:{{port}}/api/healthcare-professionals/1
+Content-Type: application/json
+
+{
+  "name": "Dra. María L. López",
+  "specialty": "Pediatría"
+}
+
+### Delete professional
+DELETE http://{{host}}:{{port}}/api/healthcare-professionals/1
+
+

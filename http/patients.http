@@ -1,0 +1,37 @@
+### List patients (paginated)
+GET http://{{host}}:{{port}}/api/patients?page=0&size=10
+Accept: application/json
+
+### Create patient
+POST http://{{host}}:{{port}}/api/patients
+Content-Type: application/json
+
+{
+  "rut": "12345678-9",
+  "name": "Juan Perez",
+  "birthDate": "1985-04-12",
+  "sex": "M",
+  "residentialSector": "Santiago Centro",
+  "fonasaTier": "B"
+}
+
+### Get patient by id
+GET http://{{host}}:{{port}}/api/patients/1
+Accept: application/json
+
+### Update patient
+PUT http://{{host}}:{{port}}/api/patients/1
+Content-Type: application/json
+
+{
+  "name": "Juan P. Perez",
+  "birthDate": "1985-04-12",
+  "sex": "M",
+  "residentialSector": "Providencia",
+  "fonasaTier": "B"
+}
+
+### Delete patient
+DELETE http://{{host}}:{{port}}/api/patients/1
+
+

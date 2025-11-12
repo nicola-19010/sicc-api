@@ -1,0 +1,37 @@
+### List prescriptions
+GET http://{{host}}:{{port}}/api/prescriptions?page=0&size=10
+Accept: application/json
+
+### Create prescription (with medications)
+POST http://{{host}}:{{port}}/api/prescriptions
+Content-Type: application/json
+
+{
+  "date": "2025-11-10",
+  "consultationId": 1,
+  "medications": [
+    { "medicationId": 1, "quantity": 2, "instructions": "Tomar después de comer" },
+    { "medicationId": 2, "quantity": 1, "instructions": "Una vez al día" }
+  ]
+}
+
+### Get prescription
+GET http://{{host}}:{{port}}/api/prescriptions/1
+Accept: application/json
+
+### Update prescription
+PUT http://{{host}}:{{port}}/api/prescriptions/1
+Content-Type: application/json
+
+{
+  "date": "2025-11-11",
+  "consultationId": 1,
+  "medications": [
+    { "medicationId": 1, "quantity": 3, "instructions": "Tomar con agua" }
+  ]
+}
+
+### Delete prescription
+DELETE http://{{host}}:{{port}}/api/prescriptions/1
+
+

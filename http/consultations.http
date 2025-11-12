@@ -1,0 +1,41 @@
+### List consultations
+GET http://{{host}}:{{port}}/api/consultations?page=0&size=10
+Accept: application/json
+
+### Create consultation (with diagnoses)
+POST http://{{host}}:{{port}}/api/consultations
+Content-Type: application/json
+
+{
+  "date": "2025-11-01",
+  "type": "GENERAL",
+  "patientId": 1,
+  "professionalId": 1,
+  "diagnoses": [
+    { "cie10Code": "A00", "description": "Cholera" },
+    { "cie10Code": "B01", "description": "Varicela" }
+  ]
+}
+
+### Get consultation
+GET http://{{host}}:{{port}}/api/consultations/1
+Accept: application/json
+
+### Update consultation
+PUT http://{{host}}:{{port}}/api/consultations/1
+Content-Type: application/json
+
+{
+  "date": "2025-11-02",
+  "type": "FOLLOW_UP",
+  "patientId": 1,
+  "professionalId": 1,
+  "diagnoses": [
+    { "cie10Code": "B01", "description": "Varicela leve" }
+  ]
+}
+
+### Delete consultation
+DELETE http://{{host}}:{{port}}/api/consultations/1
+
+

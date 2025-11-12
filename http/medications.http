@@ -1,0 +1,32 @@
+### List medications
+GET http://{{host}}:{{port}}/api/medications?page=0&size=10
+Accept: application/json
+
+### Create medication
+POST http://{{host}}:{{port}}/api/medications
+Content-Type: application/json
+
+{
+  "name": "Paracetamol",
+  "dosage": "500mg",
+  "pharmaceuticalFormName": "Tableta"
+}
+
+### Get medication
+GET http://{{host}}:{{port}}/api/medications/1
+Accept: application/json
+
+### Update medication
+PUT http://{{host}}:{{port}}/api/medications/1
+Content-Type: application/json
+
+{
+  "name": "Paracetamol",
+  "dosage": "650mg",
+  "pharmaceuticalFormName": "Tableta"
+}
+
+### Delete medication
+DELETE http://{{host}}:{{port}}/api/medications/1
+
+

@@ -1,0 +1,60 @@
+### List CIE10
+
+GET http://{{host}}:{{port}}/api/cie10?page=0&size=10
+Accept: application/json
+
+### Create CIE10
+POST http://{{host}}:{{port}}/api/cie10
+Content-Type: application/json
+
+{
+  "code": "A00",
+  "name": "Cholera"
+}
+
+
+### Get CIE10
+GET http://{{host}}:{{port}}/api/cie10/A00
+Accept: application/json
+
+### Update CIE10
+PUT http://{{host}}:{{port}}/api/cie10/A00
+Content-Type: application/json
+
+{
+  "code": "A00",
+  "name": "Cholera (updated)"
+}
+
+### Delete CIE10
+DELETE http://{{host}}:{{port}}/api/cie10/A00
+
+
+### List Pharmaceutical Forms
+GET http://{{host}}:{{port}}/api/pharmaceutical-forms?page=0&size=10
+Accept: application/json
+
+### Create Pharmaceutical Form
+POST http://{{host}}:{{port}}/api/pharmaceutical-forms
+Content-Type: application/json
+
+{
+  "name": "Tableta"
+}
+
+### Get Pharmaceutical Form
+GET http://{{host}}:{{port}}/api/pharmaceutical-forms/1
+Accept: application/json
+
+### Update Pharmaceutical Form
+PUT http://{{host}}:{{port}}/api/pharmaceutical-forms/1
+Content-Type: application/json
+
+{
+  "name": "Tableta"
+}
+
+### Delete Pharmaceutical Form
+DELETE http://{{host}}:{{port}}/api/pharmaceutical-forms/1
+
+
