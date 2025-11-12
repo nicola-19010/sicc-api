@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_prescription_consultation_date", columnList = "consultation_id, date")
+})
 @Getter
 @Setter
 @NoArgsConstructor
