@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.prescription.infrastructure;
+package cl.sicc.siccapi.prescription.repository;
 
 import cl.sicc.siccapi.prescription.domain.PharmaceuticalForm;
 import org.springframework.data.jpa.repository.JpaRepository;

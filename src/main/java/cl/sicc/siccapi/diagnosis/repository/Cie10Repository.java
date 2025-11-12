@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.diagnosis.infrastructure;
+package cl.sicc.siccapi.diagnosis.repository;
 
 import cl.sicc.siccapi.diagnosis.domain.Cie10;
 import org.springframework.data.jpa.repository.JpaRepository;

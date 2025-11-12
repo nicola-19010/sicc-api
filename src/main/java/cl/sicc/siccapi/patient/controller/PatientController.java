@@ -3,7 +3,7 @@ package cl.sicc.siccapi.patient.controller;
 import cl.sicc.siccapi.patient.dto.PatientCreateDto;
 import cl.sicc.siccapi.patient.dto.PatientDto;
 import cl.sicc.siccapi.patient.dto.PatientUpdateDto;
-import cl.sicc.siccapi.patient.application.PatientService;
+import cl.sicc.siccapi.patient.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

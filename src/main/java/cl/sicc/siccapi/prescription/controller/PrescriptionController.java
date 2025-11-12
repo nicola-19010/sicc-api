@@ -1,6 +1,6 @@
 package cl.sicc.siccapi.prescription.controller;
 
-import cl.sicc.siccapi.prescription.api.dto.PrescriptionDto;
+import cl.sicc.siccapi.prescription.dto.PrescriptionDto;
 import cl.sicc.siccapi.prescription.service.PrescriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

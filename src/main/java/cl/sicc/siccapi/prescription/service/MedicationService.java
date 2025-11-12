@@ -1,8 +1,8 @@
 package cl.sicc.siccapi.prescription.service;
 
-import cl.sicc.siccapi.prescription.api.dto.MedicationDto;
+import cl.sicc.siccapi.prescription.dto.MedicationDto;
 import cl.sicc.siccapi.prescription.domain.Medication;
-import cl.sicc.siccapi.prescription.infrastructure.MedicationRepository;
+import cl.sicc.siccapi.prescription.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,4 +52,3 @@ public class MedicationService {
         return d;
     }
 }
-

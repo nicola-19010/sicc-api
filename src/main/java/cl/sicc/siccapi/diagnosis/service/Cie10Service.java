@@ -1,8 +1,8 @@
-package cl.sicc.siccapi.diagnosis.application;
+package cl.sicc.siccapi.diagnosis.service;
 
 import cl.sicc.siccapi.diagnosis.dto.Cie10Dto;
 import cl.sicc.siccapi.diagnosis.domain.Cie10;
-import cl.sicc.siccapi.diagnosis.infrastructure.Cie10Repository;
+import cl.sicc.siccapi.diagnosis.repository.Cie10Repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

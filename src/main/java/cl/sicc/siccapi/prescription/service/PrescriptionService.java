@@ -1,13 +1,13 @@
 package cl.sicc.siccapi.prescription.service;
 
-import cl.sicc.siccapi.prescription.api.dto.PrescriptionDto;
-import cl.sicc.siccapi.prescription.api.dto.PrescriptionMedicationDto;
+import cl.sicc.siccapi.prescription.dto.PrescriptionDto;
+import cl.sicc.siccapi.prescription.dto.PrescriptionMedicationDto;
 import cl.sicc.siccapi.prescription.domain.Prescription;
 import cl.sicc.siccapi.prescription.domain.PrescriptionMedication;
 import cl.sicc.siccapi.prescription.domain.Medication;
-import cl.sicc.siccapi.prescription.infrastructure.PrescriptionRepository;
-import cl.sicc.siccapi.consultation.infrastructure.ConsultationRepository;
-import cl.sicc.siccapi.prescription.infrastructure.MedicationRepository;
+import cl.sicc.siccapi.prescription.repository.PrescriptionRepository;
+import cl.sicc.siccapi.consultation.repository.ConsultationRepository;
+import cl.sicc.siccapi.prescription.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

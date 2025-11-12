@@ -3,7 +3,7 @@ package cl.sicc.siccapi.healthcareprofessional.controller;
 import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalCreateDto;
 import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalDto;
 import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalUpdateDto;
-import cl.sicc.siccapi.healthcareprofessional.application.HealthcareProfessionalService;
+import cl.sicc.siccapi.healthcareprofessional.service.HealthcareProfessionalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,6 @@
 package cl.sicc.siccapi.prescription.controller;
 
-import cl.sicc.siccapi.prescription.api.dto.MedicationDto;
+import cl.sicc.siccapi.prescription.dto.MedicationDto;
 import cl.sicc.siccapi.prescription.service.MedicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,4 +45,3 @@ public class MedicationController {
         return ResponseEntity.noContent().build();
     }
 }
-

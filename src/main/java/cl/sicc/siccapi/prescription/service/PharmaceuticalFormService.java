@@ -1,8 +1,8 @@
 package cl.sicc.siccapi.prescription.service;
 
-import cl.sicc.siccapi.prescription.api.dto.PharmaceuticalFormDto;
 import cl.sicc.siccapi.prescription.domain.PharmaceuticalForm;
-import cl.sicc.siccapi.prescription.infrastructure.PharmaceuticalFormRepository;
+import cl.sicc.siccapi.prescription.repository.PharmaceuticalFormRepository;
+import cl.sicc.siccapi.prescription.dto.PharmaceuticalFormDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,4 +47,3 @@ public class PharmaceuticalFormService {
         return d;
     }
 }
-
