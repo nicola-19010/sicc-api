@@ -1,8 +1,8 @@
 package cl.sicc.siccapi.healthcareprofessional.application;
 
-import cl.sicc.siccapi.healthcareprofessional.api.dto.HealthcareProfessionalCreateDto;
-import cl.sicc.siccapi.healthcareprofessional.api.dto.HealthcareProfessionalDto;
-import cl.sicc.siccapi.healthcareprofessional.api.dto.HealthcareProfessionalUpdateDto;
+import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalCreateDto;
+import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalDto;
+import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalUpdateDto;
 import cl.sicc.siccapi.healthcareprofessional.domain.HealthcareProfessional;
 import cl.sicc.siccapi.healthcareprofessional.infrastructure.HealthcareProfessionalRepository;
 import lombok.RequiredArgsConstructor;

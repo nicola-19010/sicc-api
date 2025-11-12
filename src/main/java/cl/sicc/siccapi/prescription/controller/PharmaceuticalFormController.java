@@ -1,6 +1,7 @@
-package cl.sicc.siccapi.prescription.api;
+package cl.sicc.siccapi.prescription.controller;
 
-import cl.sicc.siccapi.prescription.api.dto.PrescriptionDto;
+import cl.sicc.siccapi.prescription.api.dto.PharmaceuticalFormDto;
+import cl.sicc.siccapi.prescription.service.PharmaceuticalFormService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,30 +12,30 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/prescriptions")
+@RequestMapping("/api/pharmaceutical-forms")
 @RequiredArgsConstructor
 @Validated
-public class PrescriptionController {
-    private final cl.sicc.siccapi.prescription.application.PrescriptionService service;
+public class PharmaceuticalFormController {
+    private final PharmaceuticalFormService service;
 
     @GetMapping
-    public ResponseEntity<Page<PrescriptionDto>> list(Pageable pageable) {
+    public ResponseEntity<Page<PharmaceuticalFormDto>> list(Pageable pageable) {
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PrescriptionDto> get(@PathVariable Long id) {
+    public ResponseEntity<PharmaceuticalFormDto> get(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<PrescriptionDto> create(@Valid @RequestBody PrescriptionDto dto) {
-        PrescriptionDto created = service.create(dto);
+    public ResponseEntity<PharmaceuticalFormDto> create(@Valid @RequestBody PharmaceuticalFormDto dto) {
+        PharmaceuticalFormDto created = service.create(dto);
         return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PrescriptionDto> update(@PathVariable Long id, @Valid @RequestBody PrescriptionDto dto) {
+    public ResponseEntity<PharmaceuticalFormDto> update(@PathVariable Long id, @Valid @RequestBody PharmaceuticalFormDto dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
@@ -44,3 +45,4 @@ public class PrescriptionController {
         return ResponseEntity.noContent().build();
     }
 }
+

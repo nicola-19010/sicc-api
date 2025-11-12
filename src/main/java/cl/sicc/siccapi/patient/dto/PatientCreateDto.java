@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.patient.api.dto;
+package cl.sicc.siccapi.patient.dto;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;
@@ -6,7 +6,10 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
-public class PatientUpdateDto {
+public class PatientCreateDto {
+    @NotBlank
+    private String rut;
+
     @NotBlank
     private String name;
 

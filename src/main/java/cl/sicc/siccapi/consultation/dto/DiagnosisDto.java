@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.consultation.api.dto;
+package cl.sicc.siccapi.consultation.dto;
 
 import lombok.Data;
 

@@ -1,18 +1,23 @@
-package cl.sicc.siccapi.patient.api.dto;
+package cl.sicc.siccapi.patient.dto;
 
 import lombok.Data;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
 @Data
-public class PatientDto {
-    private Long id;
-    private String rut;
+public class PatientUpdateDto {
+    @NotBlank
     private String name;
+
+    @NotNull
+    @Past
     private LocalDate birthDate;
-    private Integer age;
+
     private String sex;
+
     private String residentialSector;
+
     private String fonasaTier;
 }
 

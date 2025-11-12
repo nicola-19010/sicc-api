@@ -1,8 +1,8 @@
 package cl.sicc.siccapi.patient.application;
 
-import cl.sicc.siccapi.patient.api.dto.PatientCreateDto;
-import cl.sicc.siccapi.patient.api.dto.PatientDto;
-import cl.sicc.siccapi.patient.api.dto.PatientUpdateDto;
+import cl.sicc.siccapi.patient.dto.PatientCreateDto;
+import cl.sicc.siccapi.patient.dto.PatientDto;
+import cl.sicc.siccapi.patient.dto.PatientUpdateDto;
 import cl.sicc.siccapi.patient.domain.Patient;
 import cl.sicc.siccapi.patient.infrastructure.PatientRepository;
 import lombok.RequiredArgsConstructor;

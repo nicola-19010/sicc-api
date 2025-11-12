@@ -1,4 +1,18 @@
 package cl.sicc.siccapi.patient.dto;
 
-// Placeholder DTO for Patient
-public class PatientDto { }
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+public class PatientDto {
+    private Long id;
+    private String rut;
+    private String name;
+    private LocalDate birthDate;
+    private Integer age;
+    private String sex;
+    private String residentialSector;
+    private String fonasaTier;
+}
+

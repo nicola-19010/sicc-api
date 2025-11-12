@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.healthcareprofessional.api.dto;
+package cl.sicc.siccapi.healthcareprofessional.dto;
 
 import lombok.Data;
 import jakarta.validation.constraints.NotBlank;

@@ -1,27 +1,50 @@
 package cl.sicc.siccapi.healthcareprofessional.controller;
 
+import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalCreateDto;
+import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalDto;
+import cl.sicc.siccapi.healthcareprofessional.dto.HealthcareProfessionalUpdateDto;
+import cl.sicc.siccapi.healthcareprofessional.application.HealthcareProfessionalService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import cl.sicc.siccapi.healthcareprofessional.service.HealthcareProfessionalService;
-import cl.sicc.siccapi.healthcareprofessional.domain.HealthcareProfessional;
-import java.util.List;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/healthcare-professionals")
+@RequiredArgsConstructor
+@Validated
 public class HealthcareProfessionalController {
-
     private final HealthcareProfessionalService service;
 
-    public HealthcareProfessionalController(HealthcareProfessionalService service) {
-        this.service = service;
+    @GetMapping
+    public ResponseEntity<Page<HealthcareProfessionalDto>> list(Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
-    @GetMapping
-    public List<HealthcareProfessional> getAll() {
-        return service.findAll();
+    @GetMapping("/{id}")
+    public ResponseEntity<HealthcareProfessionalDto> get(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public HealthcareProfessional create(@RequestBody HealthcareProfessional professional) {
-        return service.save(professional);
+    public ResponseEntity<HealthcareProfessionalDto> create(@Valid @RequestBody HealthcareProfessionalCreateDto dto) {
+        HealthcareProfessionalDto created = service.create(dto);
+        return ResponseEntity.status(201).body(created);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<HealthcareProfessionalDto> update(@PathVariable Long id, @Valid @RequestBody HealthcareProfessionalUpdateDto dto) {
+        return ResponseEntity.ok(service.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
+

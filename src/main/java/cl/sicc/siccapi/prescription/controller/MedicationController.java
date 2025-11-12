@@ -1,9 +1,7 @@
-package cl.sicc.siccapi.patient.api;
+package cl.sicc.siccapi.prescription.controller;
 
-import cl.sicc.siccapi.patient.api.dto.PatientCreateDto;
-import cl.sicc.siccapi.patient.api.dto.PatientDto;
-import cl.sicc.siccapi.patient.api.dto.PatientUpdateDto;
-import cl.sicc.siccapi.patient.application.PatientService;
+import cl.sicc.siccapi.prescription.api.dto.MedicationDto;
+import cl.sicc.siccapi.prescription.service.MedicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,30 +12,30 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/patients")
+@RequestMapping("/api/medications")
 @RequiredArgsConstructor
 @Validated
-public class PatientController {
-    private final PatientService service;
+public class MedicationController {
+    private final MedicationService service;
 
     @GetMapping
-    public ResponseEntity<Page<PatientDto>> list(Pageable pageable) {
+    public ResponseEntity<Page<MedicationDto>> list(Pageable pageable) {
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PatientDto> get(@PathVariable Long id) {
+    public ResponseEntity<MedicationDto> get(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<PatientDto> create(@Valid @RequestBody PatientCreateDto dto) {
-        PatientDto created = service.create(dto);
+    public ResponseEntity<MedicationDto> create(@Valid @RequestBody MedicationDto dto) {
+        MedicationDto created = service.create(dto);
         return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PatientDto> update(@PathVariable Long id, @Valid @RequestBody PatientUpdateDto dto) {
+    public ResponseEntity<MedicationDto> update(@PathVariable Long id, @Valid @RequestBody MedicationDto dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 

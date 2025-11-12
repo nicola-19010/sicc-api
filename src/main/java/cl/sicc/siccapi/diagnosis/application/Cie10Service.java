@@ -1,6 +1,6 @@
 package cl.sicc.siccapi.diagnosis.application;
 
-import cl.sicc.siccapi.diagnosis.api.dto.Cie10Dto;
+import cl.sicc.siccapi.diagnosis.dto.Cie10Dto;
 import cl.sicc.siccapi.diagnosis.domain.Cie10;
 import cl.sicc.siccapi.diagnosis.infrastructure.Cie10Repository;
 import lombok.RequiredArgsConstructor;

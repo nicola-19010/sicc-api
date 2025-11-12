@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.diagnosis.api.dto;
+package cl.sicc.siccapi.diagnosis.dto;
 
 import lombok.Data;
 

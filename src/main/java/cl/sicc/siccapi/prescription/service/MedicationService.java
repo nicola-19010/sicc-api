@@ -1,4 +1,4 @@
-package cl.sicc.siccapi.prescription.application;
+package cl.sicc.siccapi.prescription.service;
 
 import cl.sicc.siccapi.prescription.api.dto.MedicationDto;
 import cl.sicc.siccapi.prescription.domain.Medication;
