@@ -5,12 +5,16 @@ import cl.sicc.siccapi.healthcareprofessional.domain.HealthcareProfessional;
 import cl.sicc.siccapi.diagnosis.domain.Diagnosis;
 import cl.sicc.siccapi.prescription.domain.Prescription;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_consultation_patient_date", columnList = "patient_id, date")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +25,7 @@ public class Consultation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @PastOrPresent(message = "La fecha de la consulta no puede ser futura")
     private LocalDate date;
 
     @Enumerated(EnumType.STRING)

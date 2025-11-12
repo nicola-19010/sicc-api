@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(indexes = @Index(name = "idx_professional_rut", columnList = "rut"))
 @Getter
 @Setter
 @NoArgsConstructor
