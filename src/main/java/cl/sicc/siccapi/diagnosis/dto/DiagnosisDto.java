@@ -14,10 +14,9 @@ public class DiagnosisDto {
     @NotNull(message = "Consultation ID is required")
     private Long consultationId;
 
-    @NotNull(message = "CIE-10 ID is required")
-    private Long cie10Id;
-
+    @NotNull(message = "CIE-10 code is required")
     private String cie10Code;
+
     private String cie10Description;
     private String description;
 }

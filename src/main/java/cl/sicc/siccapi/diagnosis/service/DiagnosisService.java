@@ -54,8 +54,8 @@ public class DiagnosisService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta no encontrada"));
         d.setConsultation(consultation);
 
-        Cie10 cie10 = cie10Repository.findById(dto.getCie10Id())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "CIE-10 no encontrado"));
+        Cie10 cie10 = cie10Repository.findById(dto.getCie10Code())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "CIE-10 no encontrado: " + dto.getCie10Code()));
         d.setCie10(cie10);
 
         Diagnosis saved = repository.save(d);
@@ -74,9 +74,9 @@ public class DiagnosisService {
             d.setConsultation(consultation);
         }
 
-        if (dto.getCie10Id() != null) {
-            Cie10 cie10 = cie10Repository.findById(dto.getCie10Id())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "CIE-10 no encontrado"));
+        if (dto.getCie10Code() != null) {
+            Cie10 cie10 = cie10Repository.findById(dto.getCie10Code())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "CIE-10 no encontrado: " + dto.getCie10Code()));
             d.setCie10(cie10);
         }
 
@@ -92,9 +92,8 @@ public class DiagnosisService {
         DiagnosisDto dto = new DiagnosisDto();
         dto.setId(d.getId());
         dto.setConsultationId(d.getConsultation() != null ? d.getConsultation().getId() : null);
-        dto.setCie10Id(d.getCie10() != null ? d.getCie10().getId() : null);
         dto.setCie10Code(d.getCie10() != null ? d.getCie10().getCode() : null);
-        dto.setCie10Description(d.getCie10() != null ? d.getCie10().getDescription() : null);
+        dto.setCie10Description(d.getCie10() != null ? d.getCie10().getName() : null);
         dto.setDescription(d.getDescription());
         return dto;
     }
