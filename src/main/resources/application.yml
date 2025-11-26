@@ -1,5 +1,5 @@
 spring:
   application:
     name: sicc-api
-  #profiles:
-    #active: dev
+  profiles:
+    active: dev
