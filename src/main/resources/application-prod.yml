@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://<IP_TU_VPS>:5432/sicc
+    url: jdbc:postgresql://db:5432/siccdb   # host = servicio "db" del compose
     username: sicc
     password: sicc
     driver-class-name: org.postgresql.Driver
@@ -16,5 +16,4 @@ spring:
           time_zone: UTC
 
   flyway:
-    enabled: true
-    locations: classpath:db/migration
+    enabled: false

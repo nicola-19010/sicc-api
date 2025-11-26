@@ -30,10 +30,7 @@ services:
     ports:
       - "8081:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/siccdb
-      SPRING_DATASOURCE_USERNAME: sicc
-      SPRING_DATASOURCE_PASSWORD: sicc
-      # SPRING_PROFILES_ACTIVE: prod   # si usas perfiles
+      SPRING_PROFILES_ACTIVE: prod
 
   frontend:
     image: nicolaspa23/sicc-frontend-image:latest
