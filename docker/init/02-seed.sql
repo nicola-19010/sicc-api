@@ -142,10 +142,10 @@ FROM generate_series(1, 200) gs(n);
 INSERT INTO consultation (date, type, patient_id, professional_id)
 SELECT DATE '2023-01-01' + (random() * 700)::INTEGER,
        CASE (gs.n % 4)
-           WHEN 0 THEN 'Consulta General'
-           WHEN 1 THEN 'Control'
-           WHEN 2 THEN 'Urgencia'
-           ELSE 'Seguimiento'
+           WHEN 0 THEN 'CONSULTA_GENERAL'
+           WHEN 1 THEN 'CONTROL'
+           WHEN 2 THEN 'URGENCIA'
+           ELSE 'SEGUIMIENTO'
            END,
        1 + (random() * 19999)::INTEGER,
        1 + (random() * 199)::INTEGER

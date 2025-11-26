@@ -44,6 +44,9 @@ public class Consultation {
     private List<Prescription> prescriptions;
 
     public enum Type {
-        GENERAL, EMERGENCY, FOLLOW_UP, OTHER
+        CONSULTA_GENERAL,
+        CONTROL,
+        URGENCIA,
+        SEGUIMIENTO
     }
 }
