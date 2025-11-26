@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: sicc-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sicc
+      POSTGRES_PASSWORD: sicc
+      POSTGRES_DB: siccdb
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
+      - ./docker/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sicc -d siccdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+
