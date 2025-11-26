@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -299,7 +298,37 @@ public class StatsService {
     }
 
     private List<SpecialtyDiagnosisDto> getDiagnosisBySpecialty() {
-        return getDiagnosesBySpecialty();
+        String sql = """
+            SELECT
+                COALESCE(hp.specialty, 'Sin especialidad') as specialty,
+                COALESCE(d.description, cie.name) as diagnosis,
+                COUNT(*) as count
+            FROM diagnosis d
+            JOIN cie10 cie ON d.cie10_code = cie.code
+            JOIN consultation c ON d.consultation_id = c.id
+            LEFT JOIN healthcare_professional hp ON c.professional_id = hp.id
+            GROUP BY hp.specialty, COALESCE(d.description, cie.name)
+            ORDER BY COUNT(*) DESC
+            LIMIT 50
+            """;
+        Query query = entityManager.createNativeQuery(sql);
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = query.getResultList();
+
+        // Agrupar por especialidad
+        Map<String, List<DiagnosisCountDto>> specialtyMap = new HashMap<>();
+        for (Object[] row : results) {
+            String specialty = (String) row[0];
+            String diagnosis = (String) row[1];
+            Long count = ((Number) row[2]).longValue();
+
+            specialtyMap.computeIfAbsent(specialty, k -> new ArrayList<>())
+                .add(new DiagnosisCountDto(diagnosis, count));
+        }
+
+        return specialtyMap.entrySet().stream()
+            .map(entry -> new SpecialtyDiagnosisDto(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
     }
 
     private List<MonthlyCountDto> getRespiratoryTrend() {
@@ -746,12 +775,19 @@ public class StatsService {
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
 
-        return results.stream()
-            .map(row -> new SpecialtyDiagnosisDto(
-                (String) row[0],
-                (String) row[1],
-                ((Number) row[2]).longValue()
-            ))
+        // Agrupar por especialidad
+        Map<String, List<DiagnosisCountDto>> specialtyMap = new HashMap<>();
+        for (Object[] row : results) {
+            String specialty = (String) row[0];
+            String diagnosis = (String) row[1];
+            Long count = ((Number) row[2]).longValue();
+
+            specialtyMap.computeIfAbsent(specialty, k -> new ArrayList<>())
+                .add(new DiagnosisCountDto(diagnosis, count));
+        }
+
+        return specialtyMap.entrySet().stream()
+            .map(entry -> new SpecialtyDiagnosisDto(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());
     }
 
