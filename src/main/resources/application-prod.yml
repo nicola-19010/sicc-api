@@ -1,9 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/siccdb   # host = servicio "db" del compose
+    url: jdbc:postgresql://db:5432/siccdb
     username: sicc
     password: sicc
-    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
