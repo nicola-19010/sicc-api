@@ -45,6 +45,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Paso de debug (opcional pero muy útil)
+      - name: Debug
+        run: |
+          pwd
+          ls -R
+          echo "=== docker-compose.yml ==="
+          ls docker-compose.yml || echo "NO existe"
+          echo "=== docker ==="
+          ls docker || echo "NO existe"
+          echo "=== docker/init ==="
+          ls docker/init || echo "NO existe"
+
       - name: Upload docker-compose.yml and init scripts to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
