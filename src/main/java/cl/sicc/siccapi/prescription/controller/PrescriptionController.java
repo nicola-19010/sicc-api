@@ -10,6 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/prescriptions")
@@ -43,5 +45,10 @@ public class PrescriptionController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/recetas")
+    public ResponseEntity<List<Map<String, Object>>> getRecetas() {
+        return ResponseEntity.ok(service.getRecetas());
     }
 }

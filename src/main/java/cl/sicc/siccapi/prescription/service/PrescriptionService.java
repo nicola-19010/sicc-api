@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -103,5 +104,45 @@ public class PrescriptionService {
             d.setMedications(list);
         }
         return d;
+    }
+
+    public List<Map<String, Object>> getRecetas() {
+        List<Prescription> prescriptions = repository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Prescription p : prescriptions) {
+            Map<String, Object> receta = new java.util.HashMap<>();
+            receta.put("id", p.getId());
+            receta.put("fecha", p.getDate());
+
+            // Profesional (médico)
+            if (p.getConsultation() != null && p.getConsultation().getProfessional() != null) {
+                receta.put("profesional", p.getConsultation().getProfessional().getName());
+            } else {
+                receta.put("profesional", "Médico no especificado");
+            }
+
+            // Medicamentos
+            List<String> medicamentos = new ArrayList<>();
+            if (p.getPrescriptionMedications() != null) {
+                for (PrescriptionMedication pm : p.getPrescriptionMedications()) {
+                    if (pm.getMedication() != null) {
+                        medicamentos.add(pm.getMedication().getName());
+                    }
+                }
+            }
+            receta.put("medicamentos", medicamentos);
+
+            // Paciente
+            if (p.getConsultation() != null && p.getConsultation().getPatient() != null) {
+                receta.put("paciente", p.getConsultation().getPatient().getName());
+            } else {
+                receta.put("paciente", "Paciente no especificado");
+            }
+
+            result.add(receta);
+        }
+
+        return result;
     }
 }

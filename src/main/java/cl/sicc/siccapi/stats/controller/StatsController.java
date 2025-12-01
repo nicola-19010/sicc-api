@@ -104,4 +104,30 @@ public class StatsController {
     public ResponseEntity<List<MedicationForecastDto>> getMedicationForecast() {
         return ResponseEntity.ok(statsService.getMedicationForecast());
     }
+
+    @GetMapping("/consultations/daily")
+    public ResponseEntity<List<DailyConsultationDto>> getDailyConsultations(
+            @RequestParam(defaultValue = "30") int days) {
+        return ResponseEntity.ok(statsService.getDailyConsultations(days));
+    }
+
+    @GetMapping("/workload/professional")
+    public ResponseEntity<List<ProfessionalWorkloadDto>> getProfessionalWorkload() {
+        return ResponseEntity.ok(statsService.getProfessionalWorkload());
+    }
+
+    @GetMapping("/workload/specialty")
+    public ResponseEntity<List<SpecialtyWorkloadDto>> getSpecialtyWorkload() {
+        return ResponseEntity.ok(statsService.getSpecialtyWorkload());
+    }
+
+    @GetMapping("/demand/prediction")
+    public ResponseEntity<DemandPredictionDto> getDemandPrediction() {
+        return ResponseEntity.ok(statsService.getDemandPrediction());
+    }
+
+    @GetMapping("/demand/ai-analysis")
+    public ResponseEntity<AIAnalysisDto> getAIAnalysis() {
+        return ResponseEntity.ok(statsService.getAIAnalysis());
+    }
 }
