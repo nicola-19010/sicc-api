@@ -131,3 +131,4 @@ public class StatsController {
         return ResponseEntity.ok(statsService.getAIAnalysis());
     }
 }
+
