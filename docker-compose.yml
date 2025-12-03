@@ -32,8 +32,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       # Configuración IA - Groq API (gratuita)
-      AI_PROVIDER: groq  # groq (gratis) | deepseek (pago) | mock (sin API)
-      GROQ_API_KEY: ${GROQ_API_KEY:your-api-key-here}  # Obtener GRATIS en https://console.groq.com/
+      AI_PROVIDER: groq
+      GROQ_API_KEY: your-api-key-here
       GROQ_API_URL: https://api.groq.com/openai/v1/chat/completions
       GROQ_API_MODEL: llama-3.3-70b-versatile  # Modelo gratuito de 70B parámetros
 
