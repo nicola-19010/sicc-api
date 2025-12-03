@@ -74,3 +74,5 @@ jobs:
 
             echo "=== 3) Contenedores corriendo ==="
             docker ps
+
+
