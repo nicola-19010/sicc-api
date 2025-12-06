@@ -908,32 +908,36 @@ public class StatsService {
     // ========== DEMAND ANALYSIS METHODS ==========
 
     public List<DailyConsultationDto> getDailyConsultations(int days) {
+        LocalDate startDate = LocalDate.now().minusDays(days);
+
         String sql = """
-            SELECT
-                c.date,
-                COUNT(*) as total_consultations,
-                COUNT(CASE WHEN EXTRACT(HOUR FROM c.date) < 13 THEN 1 END) as morning_consultations,
-                COUNT(CASE WHEN EXTRACT(HOUR FROM c.date) >= 13 THEN 1 END) as afternoon_consultations,
-                COUNT(CASE WHEN c.type = 'Urgencia' THEN 1 END) as emergency_consultations
-            FROM consultation c
-            WHERE c.date >= CURRENT_DATE - INTERVAL ':days days'
-            GROUP BY c.date
-            ORDER BY c.date DESC
-            """;
+        SELECT
+            c.date::date as consultation_date,
+            COUNT(*) as total_consultations,
+            COUNT(CASE WHEN EXTRACT(HOUR FROM c.date) < 13 THEN 1 END) as morning_consultations,
+            COUNT(CASE WHEN EXTRACT(HOUR FROM c.date) >= 13 THEN 1 END) as afternoon_consultations,
+            COUNT(CASE WHEN c.type = 'Urgencia' THEN 1 END) as emergency_consultations
+        FROM consultation c
+        WHERE c.date::date >= :startDate
+        GROUP BY c.date::date
+        ORDER BY c.date::date DESC
+        """;
+
         Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("days", days);
+        query.setParameter("startDate", startDate);
+
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
 
         return results.stream()
-            .map(row -> new DailyConsultationDto(
-                ((java.sql.Date) row[0]).toLocalDate(),
-                ((Number) row[1]).intValue(),
-                ((Number) row[2]).intValue(),
-                ((Number) row[3]).intValue(),
-                ((Number) row[4]).intValue()
-            ))
-            .collect(Collectors.toList());
+                .map(row -> new DailyConsultationDto(
+                        ((java.sql.Date) row[0]).toLocalDate(),
+                        ((Number) row[1]).intValue(),
+                        ((Number) row[2]).intValue(),
+                        ((Number) row[3]).intValue(),
+                        ((Number) row[4]).intValue()
+                ))
+                .collect(Collectors.toList());
     }
 
     public List<ProfessionalWorkloadDto> getProfessionalWorkload() {
