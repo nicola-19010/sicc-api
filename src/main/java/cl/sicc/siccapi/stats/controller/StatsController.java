@@ -20,7 +20,10 @@ public class StatsController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<DashboardStatsDto> getDashboardStats() {
-        return ResponseEntity.ok(statsService.getDashboardStats());
+        System.out.println("🔷 [STATS-CONTROLLER] GET /api/stats/dashboard - Solicitud recibida");
+        DashboardStatsDto result = statsService.getDashboardStats();
+        System.out.println("✅ [STATS-CONTROLLER] GET /api/stats/dashboard - Respuesta enviada");
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/weekly-trend")
@@ -69,6 +72,15 @@ public class StatsController {
         return ResponseEntity.ok(statsService.getDiseasesByFonasa());
     }
 
+    /**
+     * Distribución de pacientes por grupo de edad y sexo
+     * Usado por pacientes-perfil.component.ts para la tabla edad/sexo
+     */
+    @GetMapping("/patient/by-age-and-sex")
+    public ResponseEntity<List<AgeGroupBySexDto>> getPatientsByAgeAndSex() {
+        return ResponseEntity.ok(statsService.getPatientsByAgeAndSex());
+    }
+
     @GetMapping("/prescription/details")
     public ResponseEntity<List<PrescriptionDetailDto>> getPrescriptionDetails(
             @RequestParam(defaultValue = "50") int limit) {
@@ -113,12 +125,55 @@ public class StatsController {
 
     @GetMapping("/workload/professional")
     public ResponseEntity<List<ProfessionalWorkloadDto>> getProfessionalWorkload() {
-        return ResponseEntity.ok(statsService.getProfessionalWorkload());
+        System.out.println("🔷 [STATS-CONTROLLER] GET /api/stats/workload/professional - Solicitud recibida");
+        List<ProfessionalWorkloadDto> result = statsService.getProfessionalWorkload();
+        System.out.println("✅ [STATS-CONTROLLER] GET /api/stats/workload/professional - Devolviendo " + result.size() + " registros");
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/workload/specialty")
     public ResponseEntity<List<SpecialtyWorkloadDto>> getSpecialtyWorkload() {
-        return ResponseEntity.ok(statsService.getSpecialtyWorkload());
+        System.out.println("🔷 [STATS-CONTROLLER] GET /api/stats/workload/specialty - Solicitud recibida");
+        List<SpecialtyWorkloadDto> result = statsService.getSpecialtyWorkload();
+        System.out.println("✅ [STATS-CONTROLLER] GET /api/stats/workload/specialty - Devolviendo " + result.size() + " registros");
+        return ResponseEntity.ok(result);
+    }
+
+    // ========== NUEVOS ENDPOINTS PARA REQUISITOS PENDIENTES ==========
+
+    /**
+     * E13: Gráfico anual de derivaciones a especialistas
+     */
+    @GetMapping("/referrals")
+    public ResponseEntity<ReferralStatsDto> getReferralStats() {
+        return ResponseEntity.ok(statsService.getReferralStats());
+    }
+
+    /**
+     * T7/O8: Consultas por tipo (urgentes vs generales)
+     */
+    @GetMapping("/consultations/by-type")
+    public ResponseEntity<List<ConsultationTypeStatsDto>> getConsultationsByType() {
+        return ResponseEntity.ok(statsService.getConsultationsByTypeDetailed());
+    }
+
+    /**
+     * E6: Tendencia detallada de enfermedades respiratorias
+     */
+    @GetMapping("/diagnosis/respiratory-trend")
+    public ResponseEntity<RespiratoryTrendDto> getRespiratoryTrendDetailed() {
+        System.out.println("🔷 [STATS-CONTROLLER] GET /api/stats/diagnosis/respiratory-trend - Solicitud recibida");
+        RespiratoryTrendDto result = statsService.getRespiratoryTrendDetailed();
+        System.out.println("✅ [STATS-CONTROLLER] GET /api/stats/diagnosis/respiratory-trend - Respuesta enviada");
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * T14: Recetas frecuentes por grupo etario
+     */
+    @GetMapping("/prescription/by-age-group")
+    public ResponseEntity<List<PrescriptionsByAgeGroupDto>> getPrescriptionsByAgeGroup() {
+        return ResponseEntity.ok(statsService.getPrescriptionsByAgeGroupDetailed());
     }
 
     @GetMapping("/demand/prediction")
@@ -129,6 +184,11 @@ public class StatsController {
     @GetMapping("/demand/ai-analysis")
     public ResponseEntity<AIAnalysisDto> getAIAnalysis() {
         return ResponseEntity.ok(statsService.getAIAnalysis());
+    }
+
+    @GetMapping("/prescription/weekly-trend")
+    public ResponseEntity<List<WeeklyTrendDto>> getPrescriptionWeeklyTrend() {
+        return ResponseEntity.ok(statsService.getPrescriptionWeeklyTrend());
     }
 }
 

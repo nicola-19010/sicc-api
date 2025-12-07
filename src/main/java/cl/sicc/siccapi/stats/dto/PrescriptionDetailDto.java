@@ -12,8 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 public class PrescriptionDetailDto {
     private Long id;
-    private LocalDate fecha;
-    private String paciente;
-    private List<String> medicamentos;
-    private String profesional;
+    private LocalDate date;
+    private String patientName;
+    private List<String> medications;
+    private String professionalName;
+    private String rut;
+    private Integer age;
+    private String fonasa;
+    private String diagnosis;
+    private String type;
 }

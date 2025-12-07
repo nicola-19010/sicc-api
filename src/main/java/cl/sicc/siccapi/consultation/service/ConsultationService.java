@@ -32,21 +32,27 @@ public class ConsultationService {
     }
 
     public ConsultationDto findById(Long id) {
-        return repository.findById(id).map(this::toDto).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return repository.findById(id).map(this::toDto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public ConsultationDto create(ConsultationDto dto) {
         Consultation c = new Consultation();
         c.setDate(dto.getDate());
-        if (dto.getType() != null) c.setType(Consultation.Type.valueOf(dto.getType()));
-        c.setPatient(patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente no encontrado")));
-        c.setProfessional(professionalRepository.findById(dto.getProfessionalId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profesional no encontrado")));
+        if (dto.getType() != null)
+            c.setType(Consultation.Type.valueOf(dto.getType()));
+        c.setPatient(patientRepository.findById(dto.getPatientId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente no encontrado")));
+        c.setProfessional(professionalRepository.findById(dto.getProfessionalId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profesional no encontrado")));
 
         if (dto.getDiagnoses() != null) {
             List<Diagnosis> list = new ArrayList<>();
             for (DiagnosisDto dd : dto.getDiagnoses()) {
                 Diagnosis diag = new Diagnosis();
-                Cie10 cie = cie10Repository.findById(dd.getCie10Code()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "CIE10 no existe: " + dd.getCie10Code()));
+                Cie10 cie = cie10Repository.findById(dd.getCie10Code())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "CIE10 no existe: " + dd.getCie10Code()));
                 diag.setCie10(cie);
                 diag.setDescription(dd.getDescription());
                 diag.setConsultation(c);
@@ -62,15 +68,22 @@ public class ConsultationService {
     public ConsultationDto update(Long id, ConsultationDto dto) {
         Consultation c = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         c.setDate(dto.getDate());
-        if (dto.getType() != null) c.setType(Consultation.Type.valueOf(dto.getType()));
-        if (dto.getPatientId() != null) c.setPatient(patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente no encontrado")));
-        if (dto.getProfessionalId() != null) c.setProfessional(professionalRepository.findById(dto.getProfessionalId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profesional no encontrado")));
+        if (dto.getType() != null)
+            c.setType(Consultation.Type.valueOf(dto.getType()));
+        if (dto.getPatientId() != null)
+            c.setPatient(patientRepository.findById(dto.getPatientId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente no encontrado")));
+        if (dto.getProfessionalId() != null)
+            c.setProfessional(professionalRepository.findById(dto.getProfessionalId()).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profesional no encontrado")));
 
         if (dto.getDiagnoses() != null) {
             List<Diagnosis> list = new ArrayList<>();
             for (DiagnosisDto dd : dto.getDiagnoses()) {
                 Diagnosis diag = new Diagnosis();
-                Cie10 cie = cie10Repository.findById(dd.getCie10Code()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "CIE10 no existe: " + dd.getCie10Code()));
+                Cie10 cie = cie10Repository.findById(dd.getCie10Code())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "CIE10 no existe: " + dd.getCie10Code()));
                 diag.setCie10(cie);
                 diag.setDescription(dd.getDescription());
                 diag.setConsultation(c);
@@ -84,7 +97,8 @@ public class ConsultationService {
     }
 
     public void delete(Long id) {
-        if (!repository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!repository.existsById(id))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         repository.deleteById(id);
     }
 
@@ -105,8 +119,27 @@ public class ConsultationService {
                 list.add(dd);
             }
             d.setDiagnoses(list);
+
+            if (!c.getDiagnoses().isEmpty()) {
+                // Use first diagnosis description as primary
+                d.setDiagnosis(c.getDiagnoses().get(0).getDescription());
+            }
+        }
+
+        if (c.getPatient() != null) {
+            d.setPatientName(c.getPatient().getName());
+            d.setPatientRut(c.getPatient().getRut());
+            d.setPatientAge(c.getPatient().getAge());
+            d.setPatientSex(c.getPatient().getSex());
+            if (c.getPatient().getFonasaTier() != null) {
+                d.setFonasaType(c.getPatient().getFonasaTier().name());
+            }
+        }
+
+        if (c.getProfessional() != null) {
+            d.setDoctorName(c.getProfessional().getName());
+            d.setSpecialtyName(c.getProfessional().getSpecialty());
         }
         return d;
     }
 }
-

@@ -13,5 +13,14 @@ public class ConsultationDto {
     private Long patientId;
     private Long professionalId;
     private List<DiagnosisDto> diagnoses;
-}
 
+    // Enriched fields for Frontend
+    private String patientName;
+    private String patientRut;
+    private Integer patientAge;
+    private String patientSex;
+    private String fonasaType;
+    private String doctorName;
+    private String specialtyName;
+    private String diagnosis; // Primary diagnosis description
+}

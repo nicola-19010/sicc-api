@@ -15,4 +15,5 @@ public class DailyConsultationDto {
     private int morningConsultations;
     private int afternoonConsultations;
     private int emergencyConsultations;
+    private int capacity;
 }
