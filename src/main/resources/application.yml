@@ -2,6 +2,9 @@ spring:
   application:
     name: sicc-api
 
+  profiles:
+    default: dev
+
   # JPA / Hibernate
   jpa:
     open-in-view: false

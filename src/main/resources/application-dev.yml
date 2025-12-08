@@ -1,11 +1,12 @@
 spring:
-  profiles:
-    active: dev
+  config:
+    activate:
+      on-profile: dev
 
   datasource:
-    url: jdbc:postgresql://localhost:5435/sicc
-    username: sicc_user
-    password: sicc_password
+    url: jdbc:postgresql://localhost:5435/siccdb
+    username: sicc
+    password: sicc
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
