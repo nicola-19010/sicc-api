@@ -1,5 +1,11 @@
 spring:
   application:
     name: sicc-api
-  #profiles:
-    #active: dev
+  profiles:
+    active: dev
+
+security:
+  jwt:
+    secret-key: c3lzdGVtLWNsL3NpY2Mvc2ljYS1hcGktand0LWtleS0yMDI1LWp3dC1zZWNyZXQta2V5LWZvcm1hdGVkLWluLWJhc2U2NA==
+    expiration: 86400000 # 24 hours in milliseconds
+

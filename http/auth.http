@@ -1,0 +1,30 @@
+### Register new user
+POST http://{{host}}:{{port}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstname": "Juan",
+  "lastname": "Pérez",
+  "email": "juan@example.com",
+  "password": "password123"
+}
+
+### Login
+POST http://{{host}}:{{port}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "juan@example.com",
+  "password": "password123"
+}
+
+### Get current user (requires token)
+GET http://{{host}}:{{port}}/api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Accept: application/json
+
+### Get user by ID (ADMIN only)
+GET http://{{host}}:{{port}}/api/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Accept: application/json
+
