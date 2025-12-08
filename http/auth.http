@@ -1,30 +1,110 @@
-### Register new user
-POST http://{{host}}:{{port}}/api/auth/register
+### Variables
+@host = localhost
+@port = 8080
+@baseUrl = http://{{host}}:{{port}}
+
+### ============ AUTH - REGISTRO ============
+
+### 1. Registrar nuevo usuario
+POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
   "firstname": "Juan",
   "lastname": "Pérez",
-  "email": "juan@example.com",
+  "email": "juan_test@example.com",
   "password": "password123"
 }
 
-### Login
-POST http://{{host}}:{{port}}/api/auth/login
+> {%
+  // Guardar el token en variable para usar en requests posteriores
+  client.global.set("auth_token", response.headers.valueOf("Set-Cookie"));
+%}
+
+### ============ AUTH - LOGIN ============
+
+### 2. Login con credenciales
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "juan@example.com",
+  "email": "juan_test@example.com",
   "password": "password123"
 }
 
-### Get current user (requires token)
-GET http://{{host}}:{{port}}/api/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-Accept: application/json
+> {%
+  // Guardar cookie en variable
+  client.global.set("refresh_token", response.headers.valueOf("Set-Cookie"));
+%}
 
-### Get user by ID (ADMIN only)
-GET http://{{host}}:{{port}}/api/users/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-Accept: application/json
+### ============ AUTH - USUARIOS PROTEGIDOS ============
+
+### 3. Obtener usuario actual
+GET {{baseUrl}}/api/users/me
+Content-Type: application/json
+
+### 4. Obtener todos los usuarios (si existe endpoint)
+GET {{baseUrl}}/api/users?page=0&size=10
+Content-Type: application/json
+
+### ============ AUTH - REFRESH TOKEN ============
+
+### 5. Renovar access token
+POST {{baseUrl}}/api/auth/refresh
+Content-Type: application/json
+
+> {%
+  // Guardar nuevo token
+  client.global.set("new_token", response.headers.valueOf("Set-Cookie"));
+%}
+
+### ============ AUTH - LOGOUT ============
+
+### 6. Cerrar sesión
+POST {{baseUrl}}/api/auth/logout
+Content-Type: application/json
+
+### ============ ENDPOINTS PROTEGIDOS ============
+
+### 7. Listar pacientes (requiere autenticación)
+GET {{baseUrl}}/api/patients?page=0&size=10
+Content-Type: application/json
+
+### 8. Listar consultas (requiere autenticación)
+GET {{baseUrl}}/api/consultations?page=0&size=10
+Content-Type: application/json
+
+### 9. Listar prescripciones (requiere autenticación)
+GET {{baseUrl}}/api/prescriptions?page=0&size=10
+Content-Type: application/json
+
+### 10. Listar profesionales (requiere autenticación)
+GET {{baseUrl}}/api/healthcareprofessionals?page=0&size=10
+Content-Type: application/json
+
+### ============ ERROR HANDLING ============
+
+### 11. Intento de acceso sin autenticación (debe dar 401)
+GET {{baseUrl}}/api/patients
+Content-Type: application/json
+
+### 12. Login con credenciales inválidas
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "wrongpassword"
+}
+
+### 13. Registrar con email duplicado
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstname": "Another",
+  "lastname": "User",
+  "email": "juan_test@example.com",
+  "password": "password123"
+}
 

@@ -1,23 +1,53 @@
 spring:
+  profiles:
+    active: dev
+
   datasource:
-    url: jdbc:postgresql://localhost:5435/siccdb
-    username: sicc
-    password: sicc
+    url: jdbc:postgresql://localhost:5435/sicc
+    username: sicc_user
+    password: sicc_password
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
 
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: true
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  # Flyway para desarrollo
   flyway:
     enabled: true
-    baseline-on-migrate: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
 
-server:
-  port: 8080
+# Seguridad JWT (tiempos de desarrollo)
+security:
+  jwt:
+    secret-key: dev-secret-key-do-not-use-in-production-1234567890-min-32-chars
+    expiration-access: 900000        # 15 minutos
+    expiration-refresh: 2592000000   # 30 días
 
+# CORS para desarrollo (localhost:4200 = Angular frontend típico)
+cors:
+  allowed-origins:
+    - http://localhost:4200
+    - http://localhost:3000
+  allow-credentials: true
+  max-age: 3600
+
+# Logging detallado en desarrollo
 logging:
   level:
-    cl:
-      sicc: DEBUG
+    root: INFO
+    cl.sicc.siccapi: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+

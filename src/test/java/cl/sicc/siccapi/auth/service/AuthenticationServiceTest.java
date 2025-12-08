@@ -6,16 +6,15 @@ import cl.sicc.siccapi.auth.dto.RegisterRequest;
 import cl.sicc.siccapi.user.domain.Role;
 import cl.sicc.siccapi.user.domain.User;
 import cl.sicc.siccapi.user.repository.UserRepository;
-import cl.sicc.siccapi.user.service.UserService;
-import cl.sicc.siccapi.security.service.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,9 +32,12 @@ class AuthenticationServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private HttpServletResponse response;
+
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
+        response = new MockHttpServletResponse();
     }
 
     @Test
@@ -47,13 +49,13 @@ class AuthenticationServiceTest {
                 .password("password123")
                 .build();
 
-        AuthenticationResponse response = authenticationService.register(request);
+        AuthenticationResponse authResponse = authenticationService.register(request, response);
 
-        assertNotNull(response);
-        assertNotNull(response.getToken());
-        assertEquals("juan@example.com", response.getEmail());
-        assertEquals("Juan", response.getFirstname());
-        assertEquals("Pérez", response.getLastname());
+        assertNotNull(authResponse);
+        assertEquals("juan@example.com", authResponse.getEmail());
+        assertEquals("Juan", authResponse.getFirstname());
+        assertEquals("Pérez", authResponse.getLastname());
+        assertTrue(userRepository.existsByEmail("juan@example.com"));
     }
 
     @Test
@@ -75,7 +77,7 @@ class AuthenticationServiceTest {
                 .password("password123")
                 .build();
 
-        assertThrows(RuntimeException.class, () -> authenticationService.register(request));
+        assertThrows(RuntimeException.class, () -> authenticationService.register(request, response));
     }
 
     @Test
@@ -96,11 +98,10 @@ class AuthenticationServiceTest {
                 .password("password123")
                 .build();
 
-        AuthenticationResponse response = authenticationService.login(request);
+        AuthenticationResponse authResponse = authenticationService.login(request, response);
 
-        assertNotNull(response);
-        assertNotNull(response.getToken());
-        assertEquals("juan@example.com", response.getEmail());
+        assertNotNull(authResponse);
+        assertEquals("juan@example.com", authResponse.getEmail());
     }
 
     @Test
@@ -120,7 +121,7 @@ class AuthenticationServiceTest {
                 .password("wrongpassword")
                 .build();
 
-        assertThrows(Exception.class, () -> authenticationService.login(request));
+        assertThrows(Exception.class, () -> authenticationService.login(request, response));
     }
 }
 
