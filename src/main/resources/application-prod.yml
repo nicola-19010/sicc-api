@@ -32,7 +32,7 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    baseline-on-migrate: false
+    baseline-on-migrate: true
 
 # Seguridad JWT (desde variables de entorno)
 security:

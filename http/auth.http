@@ -5,10 +5,16 @@
 ###
 ### El servidor debe tener un JWT secret válido configurado en application-dev.yml
 
-### Variables
-@host = localhost
-@port = 8080
+### Variables LOCALES
+#@host = localhost
+#@port = 8080
+#@baseUrl = http://{{host}}:{{port}}
+
+### VARIABLES PROD
+@host = 200.13.4.217
+@port = 8081
 @baseUrl = http://{{host}}:{{port}}
+
 
 ### Helpers de script (patrón repetible)
 ### Nota: IntelliJ HTTP Client no soporta funciones globales compartidas entre requests,
