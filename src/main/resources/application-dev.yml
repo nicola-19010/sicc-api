@@ -30,7 +30,9 @@ spring:
 # Seguridad JWT (tiempos de desarrollo)
 security:
   jwt:
-    secret-key: dev-secret-key-do-not-use-in-production-1234567890-min-32-chars
+    # Base64 encoded secret valid for testing/development
+    # Original: "dev-secret-key-do-not-use-in-production-minimum-32-chars"
+    secret-key: ZGV2LXNlY3JldC1rZXktZG8tbm90LXVzZS1pbi1wcm9kdWN0aW9uLW1pbmltdW0tMzItY2hhcnM=
     expiration-access: 900000        # 15 minutos
     expiration-refresh: 2592000000   # 30 días
 

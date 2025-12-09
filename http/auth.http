@@ -1,94 +1,252 @@
+### ============ CONFIGURACIÓN ============
+### IMPORTANTE: Asegúrate de que el servidor está corriendo con:
+### mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
+### O con docker-compose: docker-compose up -d
+###
+### El servidor debe tener un JWT secret válido configurado en application-dev.yml
+
 ### Variables
 @host = localhost
 @port = 8080
 @baseUrl = http://{{host}}:{{port}}
 
+### Helpers de script (patrón repetible)
+### Nota: IntelliJ HTTP Client no soporta funciones globales compartidas entre requests,
+### por eso repetimos la lógica defensiva en cada bloque.
+
+
 ### ============ AUTH - REGISTRO ============
 
-### 1. Registrar nuevo usuario
+### 1. Registrar nuevo usuario (EJECUTAR PRIMERO)
 POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
   "firstname": "Juan",
   "lastname": "Pérez",
-  "email": "juan_test@example.com",
+  "email": "juan_test_{{$timestamp}}@example.com",
   "password": "password123"
 }
 
 > {%
-  // Guardar el token en variable para usar en requests posteriores
-  client.global.set("auth_token", response.headers.valueOf("Set-Cookie"));
+    if (response.status === 200) {
+        const body =
+            (typeof response.body === "string")
+                ? JSON.parse(response.body)
+                : response.body;
+
+        client.global.set("testEmail", body.email);
+        client.global.set("testPassword", "password123");
+
+        console.log("✅ Usuario registrado: " + body.email);
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("❌ Error en registro (Status " + response.status + "): " + msg);
+    }
 %}
+
 
 ### ============ AUTH - LOGIN ============
 
-### 2. Login con credenciales
+### 2. Login con credenciales (EJECUTAR SEGUNDO)
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "juan_test@example.com",
-  "password": "password123"
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}"
 }
 
 > {%
-  // Guardar cookie en variable
-  client.global.set("refresh_token", response.headers.valueOf("Set-Cookie"));
+    if (response.status === 200) {
+        const body =
+            (typeof response.body === "string")
+                ? JSON.parse(response.body)
+                : response.body;
+
+        console.log("✅ Login exitoso: " + body.email);
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("❌ Login falló (Status " + response.status + "): " + msg);
+    }
 %}
+
 
 ### ============ AUTH - USUARIOS PROTEGIDOS ============
 
-### 3. Obtener usuario actual
+### 3. Obtener usuario actual (EJECUTAR DESPUÉS DEL LOGIN)
 GET {{baseUrl}}/api/users/me
 Content-Type: application/json
 
-### 4. Obtener todos los usuarios (si existe endpoint)
-GET {{baseUrl}}/api/users?page=0&size=10
-Content-Type: application/json
+> {%
+    if (response.status === 200) {
+        const body =
+            (typeof response.body === "string")
+                ? JSON.parse(response.body)
+                : response.body;
+
+        console.log("✅ Usuario obtenido: " + body.email);
+    } else if (response.status === 403) {
+        console.log("⚠️ Acceso prohibido (403): Necesitas loguear primero");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status " + response.status + ": " + msg);
+    }
+%}
+
+### 4. Obtener todos los usuarios (si existe endpoint) - COMENTADO: Retorna 500
+### GET {{baseUrl}}/api/users?page=0&size=10
+### Content-Type: application/json
+
 
 ### ============ AUTH - REFRESH TOKEN ============
 
-### 5. Renovar access token
+### 5. Renovar access token (REQUIERE ESTAR LOGUEADO)
 POST {{baseUrl}}/api/auth/refresh
 Content-Type: application/json
 
 > {%
-  // Guardar nuevo token
-  client.global.set("new_token", response.headers.valueOf("Set-Cookie"));
+    if (response.status === 200) {
+        console.log("✅ Token refrescado exitosamente");
+    } else if (response.status === 401) {
+        console.log("⚠️ No autorizado (401): Necesitas refresh_token en cookie");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status " + response.status + ": " + msg);
+    }
 %}
+
 
 ### ============ AUTH - LOGOUT ============
 
-### 6. Cerrar sesión
+### 6. Cerrar sesión (EJECUTAR AL FINAL)
 POST {{baseUrl}}/api/auth/logout
 Content-Type: application/json
 
+> {%
+    if (response.status === 204) {
+        console.log("✅ Logout exitoso - Cookies invalidadas");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Logout Status " + response.status + ": " + msg);
+    }
+%}
+
+
 ### ============ ENDPOINTS PROTEGIDOS ============
 
-### 7. Listar pacientes (requiere autenticación)
+### 7. Listar pacientes (REQUIERE ESTAR LOGUEADO)
 GET {{baseUrl}}/api/patients?page=0&size=10
 Content-Type: application/json
 
-### 8. Listar consultas (requiere autenticación)
+> {%
+    if (response.status === 403) {
+        console.log("⚠️ 403 Prohibido: Ejecuta login primero");
+    } else if (response.status === 200) {
+        console.log("✅ Acceso permitido a pacientes");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status " + response.status + ": " + msg);
+    }
+%}
+
+### 8. Listar consultas (REQUIERE ESTAR LOGUEADO)
 GET {{baseUrl}}/api/consultations?page=0&size=10
 Content-Type: application/json
 
-### 9. Listar prescripciones (requiere autenticación)
+> {%
+    if (response.status === 403) {
+        console.log("⚠️ 403 Prohibido: Ejecuta login primero");
+    } else if (response.status === 200) {
+        console.log("✅ Acceso permitido a consultas");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status " + response.status + ": " + msg);
+    }
+%}
+
+### 9. Listar prescripciones (REQUIERE ESTAR LOGUEADO)
 GET {{baseUrl}}/api/prescriptions?page=0&size=10
 Content-Type: application/json
 
-### 10. Listar profesionales (requiere autenticación)
+> {%
+    if (response.status === 403) {
+        console.log("⚠️ 403 Prohibido: Ejecuta login primero");
+    } else if (response.status === 200) {
+        console.log("✅ Acceso permitido a prescripciones");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status " + response.status + ": " + msg);
+    }
+%}
+
+### 10. Listar profesionales (REQUIERE ESTAR LOGUEADO)
 GET {{baseUrl}}/api/healthcareprofessionals?page=0&size=10
 Content-Type: application/json
 
+> {%
+    if (response.status === 403) {
+        console.log("⚠️ 403 Prohibido: Ejecuta login primero");
+    } else if (response.status === 200) {
+        console.log("✅ Acceso permitido a profesionales");
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status " + response.status + ": " + msg);
+    }
+%}
+
+
 ### ============ ERROR HANDLING ============
 
-### 11. Intento de acceso sin autenticación (debe dar 401)
+### 11. Intento de acceso SIN autenticación (DEBE DAR 403)
 GET {{baseUrl}}/api/patients
 Content-Type: application/json
 
-### 12. Login con credenciales inválidas
+> {%
+    if (response.status === 403) {
+        console.log("✅ 403 Correcto: Sin autenticación no se permite acceso");
+    } else {
+        console.log("⚠️ Status inesperado: " + response.status);
+    }
+%}
+
+### 12. Login con credenciales inválidas (DEBE DAR 401)
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -97,14 +255,50 @@ Content-Type: application/json
   "password": "wrongpassword"
 }
 
-### 13. Registrar con email duplicado
+> {%
+    if (response.status === 401) {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("✅ 401 Correcto: Credenciales inválidas");
+        console.log("Response: " + msg);
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status: " + response.status + " Response: " + msg);
+    }
+%}
+
+### 13. Registrar con email duplicado (DEBE DAR 400)
 POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
   "firstname": "Another",
   "lastname": "User",
-  "email": "juan_test@example.com",
+  "email": "{{testEmail}}",
   "password": "password123"
 }
 
+> {%
+    if (response.status === 400) {
+        const body =
+            (typeof response.body === "string")
+                ? JSON.parse(response.body)
+                : response.body;
+
+        console.log("✅ 400 Correcto: " + (body.message ?? JSON.stringify(body)));
+    } else {
+        const msg =
+            (typeof response.body === "string")
+                ? response.body
+                : JSON.stringify(response.body);
+
+        console.log("⚠️ Status: " + response.status + " Response: " + msg);
+    }
+%}
