@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.core.env.Environment;
 
 @Slf4j
 @Service
@@ -25,6 +26,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final Environment environment;
 
     /**
      * Registrar nuevo usuario
@@ -193,7 +195,12 @@ public class AuthenticationService {
      * Determina si estamos en ambiente seguro (producción)
      */
     private boolean isSecureEnvironment() {
-        String activeProfile = System.getProperty("spring.profiles.active", "");
-        return activeProfile.contains("prod");
+        // Use Spring Environment active profiles to detect running profile reliably
+        String[] active = environment.getActiveProfiles();
+        if (active == null) return false;
+        for (String p : active) {
+            if ("prod".equalsIgnoreCase(p)) return true;
+        }
+        return false;
     }
 }
