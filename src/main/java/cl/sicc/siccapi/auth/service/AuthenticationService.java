@@ -152,7 +152,9 @@ public class AuthenticationService {
         accessCookie.setSecure(isSecureEnvironment());
         accessCookie.setPath("/");
         accessCookie.setMaxAge((int) (jwtService.getAccessTokenExpiration() / 1000));
-        accessCookie.setAttribute("SameSite", "Lax");
+        // Use SameSite=None only in secure environments (production) where cookies are served over HTTPS.
+        // In development (non-secure) keep Lax to avoid browsers rejecting cookies without Secure flag.
+        accessCookie.setAttribute("SameSite", isSecureEnvironment() ? "None" : "Lax");
         response.addCookie(accessCookie);
     }
 
@@ -170,7 +172,8 @@ public class AuthenticationService {
         refreshCookie.setSecure(isSecureEnvironment());
         refreshCookie.setPath("/api/auth/refresh");
         refreshCookie.setMaxAge((int) (jwtService.getRefreshTokenExpiration() / 1000));
-        refreshCookie.setAttribute("SameSite", "Lax");
+        // Use SameSite=None only in secure environments (production) where cookies are served over HTTPS.
+        refreshCookie.setAttribute("SameSite", isSecureEnvironment() ? "None" : "Lax");
         response.addCookie(refreshCookie);
     }
 
@@ -194,4 +197,3 @@ public class AuthenticationService {
         return activeProfile.contains("prod");
     }
 }
-
