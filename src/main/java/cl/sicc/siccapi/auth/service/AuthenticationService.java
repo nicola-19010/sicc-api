@@ -150,12 +150,16 @@ public class AuthenticationService {
     private void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
         Cookie accessCookie = new Cookie("access_token", accessToken);
         accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(isSecureEnvironment());
+        // TEMPORAL WORKAROUND: algunos entornos (ej. producción accesible por HTTP) requieren
+        // que las cookies no sean marcadas como Secure, porque los navegadores no envían
+        // cookies Secure a través de HTTP. Para desbloquear desarrollo/pruebas sin HTTPS,
+        // forzamos Secure=false y SameSite=Lax. Revisar y restaurar a Secure=true, SameSite=None
+        // cuando se habilite HTTPS.
+        accessCookie.setSecure(false);
         accessCookie.setPath("/");
         accessCookie.setMaxAge((int) (jwtService.getAccessTokenExpiration() / 1000));
-        // Use SameSite=None only in secure environments (production) where cookies are served over HTTPS.
-        // In development (non-secure) keep Lax to avoid browsers rejecting cookies without Secure flag.
-        accessCookie.setAttribute("SameSite", isSecureEnvironment() ? "None" : "Lax");
+        // SameSite Lax temporalmente para que navegadores envíen la cookie en requests de navegación
+        accessCookie.setAttribute("SameSite", "Lax");
         response.addCookie(accessCookie);
     }
 
@@ -170,11 +174,12 @@ public class AuthenticationService {
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(isSecureEnvironment());
+        // TEMPORAL WORKAROUND: ver comentario en setAccessTokenCookie
+        refreshCookie.setSecure(false);
         refreshCookie.setPath("/api/auth/refresh");
         refreshCookie.setMaxAge((int) (jwtService.getRefreshTokenExpiration() / 1000));
-        // Use SameSite=None only in secure environments (production) where cookies are served over HTTPS.
-        refreshCookie.setAttribute("SameSite", isSecureEnvironment() ? "None" : "Lax");
+        // SameSite Lax temporalmente para compatibilidad con HTTP
+        refreshCookie.setAttribute("SameSite", "Lax");
         response.addCookie(refreshCookie);
     }
 
