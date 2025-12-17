@@ -1,14 +1,37 @@
 # Production profile properties (sensitive values provided via environment variables)
 spring:
-  # Replaced invalid `spring.profiles` (causaba InvalidConfigDataPropertyException)
-  # Use `spring.config.activate.on-profile` if you need this fragment to activate
-  # when a profile is active. In a profile-specific file (application-prod.yml)
-  # this is not strictly required, but we set it to be explicit and compatible.
   config:
     activate:
       on-profile: prod
 
-# CORS: allowed origins must be provided via environment variable FRONTEND_URL or a comma-separated list
+  # Database: all sensitive values from environment
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/siccdb}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Flyway for production
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: "2"
+
+# CORS: allowed origins must be provided via environment variable
 cors:
   # Example: cors.allowed-origins: https://app.example.com
   allowed-origins: ${FRONTEND_URL}

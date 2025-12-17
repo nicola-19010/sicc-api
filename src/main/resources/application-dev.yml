@@ -4,9 +4,9 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:postgresql://200.13.5.5:5435/siccdb
-    username: sicc
-    password: sicc
+    url: jdbc:postgresql://200.13.5.5:5432/siccdb
+    username: ${SPRING_DATASOURCE_USERNAME:sicc}
+    password: ${SPRING_DATASOURCE_PASSWORD:sicc}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
