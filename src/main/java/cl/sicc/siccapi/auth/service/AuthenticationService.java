@@ -27,6 +27,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     private final Environment environment;
+    /**
      * Registrar nuevo usuario
      */
     public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
@@ -193,12 +194,15 @@ public class AuthenticationService {
      * Determina si estamos en ambiente seguro (producción)
      */
     private boolean isSecureEnvironment() {
-        String activeProfile = System.getProperty("spring.profiles.active", "");
-        return activeProfile.contains("prod");
-        // Use Spring Environment active profiles to detect running profile reliably
         String[] active = environment.getActiveProfiles();
         if (active == null) return false;
+
         for (String p : active) {
-            if ("prod".equalsIgnoreCase(p)) return true;
+            if ("prod".equalsIgnoreCase(p)) {
+                return true;
+            }
         }
         return false;
+    }
+
+}
