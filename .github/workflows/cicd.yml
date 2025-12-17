@@ -68,6 +68,7 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             SECURITY_JWT_SECRET_KEY=${{ secrets.SECURITY_JWT_SECRET_KEY }}
             GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+            CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}
             EOF
 
             echo "=== 0.1) Permisos seguros para .env ==="

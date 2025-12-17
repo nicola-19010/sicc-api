@@ -1,6 +1,12 @@
 # Production profile properties (sensitive values provided via environment variables)
 spring:
-  profiles: prod
+  # Replaced invalid `spring.profiles` (causaba InvalidConfigDataPropertyException)
+  # Use `spring.config.activate.on-profile` if you need this fragment to activate
+  # when a profile is active. In a profile-specific file (application-prod.yml)
+  # this is not strictly required, but we set it to be explicit and compatible.
+  config:
+    activate:
+      on-profile: prod
 
 # CORS: allowed origins must be provided via environment variable FRONTEND_URL or a comma-separated list
 cors:
@@ -25,4 +31,3 @@ management:
   endpoint:
     health:
       show-details: never
-
