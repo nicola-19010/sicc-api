@@ -36,10 +36,10 @@ public class StatsService {
         System.out.println("📊 [STATS-SERVICE] Consultas por tipo: " + consultationsByType);
 
         Map<String, Long> consultationsByMonth = getConsultationsByMonth();
-        System.out.println("📊 [STATS-SERVICE] Consultas por mes (últimos meses): " + consultationsByMonth.size() + " registros");
-        consultationsByMonth.forEach((mes, cantidad) ->
-            System.out.println("  📅 " + mes + ": " + cantidad + " consultas")
-        );
+        System.out.println(
+                "📊 [STATS-SERVICE] Consultas por mes (últimos meses): " + consultationsByMonth.size() + " registros");
+        consultationsByMonth
+                .forEach((mes, cantidad) -> System.out.println("  📅 " + mes + ": " + cantidad + " consultas"));
 
         DashboardStatsDto dto = new DashboardStatsDto(
                 totalConsultations,
@@ -669,23 +669,23 @@ public class StatsService {
         String sql = """
                 WITH current_month_stats AS (
                     SELECT
-                        COALESCE(d.description, cie.name) as diagnosis_name,
+                        cie.name as diagnosis_name,
                         COUNT(*) as count
                     FROM diagnosis d
                     JOIN cie10 cie ON d.cie10_code = cie.code
                     JOIN consultation c ON d.consultation_id = c.id
                     WHERE TO_CHAR(c.date, 'YYYY-MM') = TO_CHAR((SELECT MAX(date) FROM consultation), 'YYYY-MM')
-                    GROUP BY COALESCE(d.description, cie.name)
+                    GROUP BY cie.name
                 ),
                 previous_month_stats AS (
                     SELECT
-                        COALESCE(d.description, cie.name) as diagnosis_name,
+                        cie.name as diagnosis_name,
                         COUNT(*) as count
                     FROM diagnosis d
                     JOIN cie10 cie ON d.cie10_code = cie.code
                     JOIN consultation c ON d.consultation_id = c.id
                     WHERE TO_CHAR(c.date, 'YYYY-MM') = TO_CHAR((SELECT MAX(date) - INTERVAL '1 month' FROM consultation), 'YYYY-MM')
-                    GROUP BY COALESCE(d.description, cie.name)
+                    GROUP BY cie.name
                 )
                 SELECT
                     COALESCE(cm.diagnosis_name, pm.diagnosis_name) as diagnosis_name,
@@ -988,7 +988,8 @@ public class StatsService {
                 })
                 .collect(Collectors.toList());
 
-        System.out.println("✅ [STATS-SERVICE] getMedicationForecast - Completado con " + forecasts.size() + " predicciones");
+        System.out.println(
+                "✅ [STATS-SERVICE] getMedicationForecast - Completado con " + forecasts.size() + " predicciones");
 
         return forecasts;
     }
@@ -1016,7 +1017,7 @@ public class StatsService {
                     COUNT(CASE WHEN EXTRACT(HOUR FROM c.date) >= 13 THEN 1 END) as afternoon_consultations,
                     COUNT(CASE WHEN c.type = 'Urgencia' THEN 1 END) as emergency_consultations
                 FROM consultation c
-                WHERE c.date >= CURRENT_DATE - INTERVAL '%d days'
+                WHERE c.date >= (SELECT MAX(date) FROM consultation) - INTERVAL '%d days'
                 GROUP BY c.date
                 ORDER BY c.date DESC
                 """.formatted(days);
@@ -1059,7 +1060,8 @@ public class StatsService {
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
 
-        System.out.println("✅ [STATS-SERVICE] getProfessionalWorkload - Resultados obtenidos: " + results.size() + " registros");
+        System.out.println(
+                "✅ [STATS-SERVICE] getProfessionalWorkload - Resultados obtenidos: " + results.size() + " registros");
 
         List<ProfessionalWorkloadDto> dtos = results.stream()
                 .map(row -> {
@@ -1110,7 +1112,8 @@ public class StatsService {
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
 
-        System.out.println("✅ [STATS-SERVICE] getSpecialtyWorkload - Resultados obtenidos: " + results.size() + " registros");
+        System.out.println(
+                "✅ [STATS-SERVICE] getSpecialtyWorkload - Resultados obtenidos: " + results.size() + " registros");
 
         List<SpecialtyWorkloadDto> dtos = results.stream()
                 .map(row -> {
@@ -1538,8 +1541,8 @@ public class StatsService {
                 FROM consultation c
                 JOIN diagnosis d ON c.id = d.consultation_id
                 JOIN cie10 cie ON d.cie10_code = cie.code
-                WHERE LOWER(COALESCE(d.description, cie.name)) SIMILAR TO
-                    '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos)%'
+                WHERE LOWER(cie.name) SIMILAR TO
+                    '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos|rinof)%'
                 """;
         Query totalQuery = entityManager.createNativeQuery(totalSql);
         Object[] totalResult = (Object[]) totalQuery.getSingleResult();
@@ -1547,24 +1550,25 @@ public class StatsService {
         Long previousTotal = ((Number) totalResult[1]).longValue();
         Double variation = previousTotal > 0 ? ((currentTotal - previousTotal) * 100.0) / previousTotal : 0.0;
 
-        System.out.println("📊 [STATS-SERVICE] Casos respiratorios - Mes actual: " + currentTotal + ", Mes anterior: " + previousTotal);
+        System.out.println("📊 [STATS-SERVICE] Casos respiratorios - Mes actual: " + currentTotal + ", Mes anterior: "
+                + previousTotal);
         System.out.println("📊 [STATS-SERVICE] Variación: " + variation + "%");
 
         // Tendencia mensual por enfermedad
         String trendSql = """
                 SELECT
                     TO_CHAR(c.date, 'YYYY-MM') as month,
-                    COUNT(CASE WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%bronquitis%' THEN 1 END) as bronquitis,
-                    COUNT(CASE WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%resfri%' THEN 1 END) as resfriado,
-                    COUNT(CASE WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%neumon%' THEN 1 END) as neumonia,
-                    COUNT(CASE WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%faringitis%' THEN 1 END) as faringitis,
-                    COUNT(CASE WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%sinusitis%' THEN 1 END) as sinusitis,
+                    COUNT(CASE WHEN LOWER(cie.name) LIKE '%bronquitis%' THEN 1 END) as bronquitis,
+                    COUNT(CASE WHEN LOWER(cie.name) LIKE '%resfri%' OR LOWER(cie.name) LIKE '%rinof%' THEN 1 END) as resfriado,
+                    COUNT(CASE WHEN LOWER(cie.name) LIKE '%neumon%' THEN 1 END) as neumonia,
+                    COUNT(CASE WHEN LOWER(cie.name) LIKE '%faringitis%' OR LOWER(cie.name) LIKE '%amigdalitis%' THEN 1 END) as faringitis,
+                    COUNT(CASE WHEN LOWER(cie.name) LIKE '%sinusitis%' OR LOWER(cie.name) LIKE '%rinitis%' THEN 1 END) as sinusitis,
                     COUNT(*) as total
                 FROM consultation c
                 JOIN diagnosis d ON c.id = d.consultation_id
                 JOIN cie10 cie ON d.cie10_code = cie.code
-                WHERE LOWER(COALESCE(d.description, cie.name)) SIMILAR TO
-                    '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos)%'
+                WHERE LOWER(cie.name) SIMILAR TO
+                    '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos|rinof|amigdal|rinitis)%'
                 AND c.date >= (SELECT MAX(date) - INTERVAL '12 months' FROM consultation)
                 GROUP BY TO_CHAR(c.date, 'YYYY-MM')
                 ORDER BY month
@@ -1591,11 +1595,12 @@ public class StatsService {
                 WITH current_month AS (
                     SELECT
                         CASE
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%bronquitis%' THEN 'Bronquitis aguda'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%resfri%' THEN 'Resfriado común'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%neumon%' THEN 'Neumonía'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%faringitis%' THEN 'Faringitis'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%sinusitis%' THEN 'Sinusitis'
+                            WHEN LOWER(cie.name) LIKE '%bronquitis%' THEN 'Bronquitis aguda'
+                            WHEN LOWER(cie.name) LIKE '%resfri%' OR LOWER(cie.name) LIKE '%rinof%' THEN 'Resfriado común'
+                            WHEN LOWER(cie.name) LIKE '%neumon%' THEN 'Neumonía'
+                            WHEN LOWER(cie.name) LIKE '%faringitis%' OR LOWER(cie.name) LIKE '%amigdalitis%' THEN 'Faringitis'
+                            WHEN LOWER(cie.name) LIKE '%sinusitis%' OR LOWER(cie.name) LIKE '%rinitis%' THEN 'Sinusitis'
+                            WHEN LOWER(cie.name) LIKE '%asma%' THEN 'Asma'
                             ELSE 'Otra respiratoria'
                         END as disease,
                         COUNT(*) as current_count
@@ -1603,18 +1608,19 @@ public class StatsService {
                     JOIN cie10 cie ON d.cie10_code = cie.code
                     JOIN consultation c ON d.consultation_id = c.id
                     WHERE c.date >= (SELECT MAX(date) - INTERVAL '1 month' FROM consultation)
-                    AND LOWER(COALESCE(d.description, cie.name)) SIMILAR TO
-                        '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos)%'
+                    AND LOWER(cie.name) SIMILAR TO
+                        '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos|rinof|amigdal|rinitis)%'
                     GROUP BY 1
                 ),
                 previous_month AS (
                     SELECT
                         CASE
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%bronquitis%' THEN 'Bronquitis aguda'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%resfri%' THEN 'Resfriado común'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%neumon%' THEN 'Neumonía'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%faringitis%' THEN 'Faringitis'
-                            WHEN LOWER(COALESCE(d.description, cie.name)) LIKE '%sinusitis%' THEN 'Sinusitis'
+                            WHEN LOWER(cie.name) LIKE '%bronquitis%' THEN 'Bronquitis aguda'
+                            WHEN LOWER(cie.name) LIKE '%resfri%' OR LOWER(cie.name) LIKE '%rinof%' THEN 'Resfriado común'
+                            WHEN LOWER(cie.name) LIKE '%neumon%' THEN 'Neumonía'
+                            WHEN LOWER(cie.name) LIKE '%faringitis%' OR LOWER(cie.name) LIKE '%amigdalitis%' THEN 'Faringitis'
+                            WHEN LOWER(cie.name) LIKE '%sinusitis%' OR LOWER(cie.name) LIKE '%rinitis%' THEN 'Sinusitis'
+                            WHEN LOWER(cie.name) LIKE '%asma%' THEN 'Asma'
                             ELSE 'Otra respiratoria'
                         END as disease,
                         COUNT(*) as previous_count
@@ -1623,8 +1629,8 @@ public class StatsService {
                     JOIN consultation c ON d.consultation_id = c.id
                     WHERE c.date >= (SELECT MAX(date) - INTERVAL '2 months' FROM consultation)
                     AND c.date < (SELECT MAX(date) - INTERVAL '1 month' FROM consultation)
-                    AND LOWER(COALESCE(d.description, cie.name)) SIMILAR TO
-                        '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos)%'
+                    AND LOWER(cie.name) SIMILAR TO
+                        '%(bronquitis|resfri|neumon|faringitis|sinusitis|respiratori|gripe|influenza|asma|tos|rinof|amigdal|rinitis)%'
                     GROUP BY 1
                 )
                 SELECT
@@ -1839,4 +1845,3 @@ public class StatsService {
         return suggestions;
     }
 }
-
